@@ -154,3 +154,52 @@ func (p *OrderServiceImpl) DeleteOrder(id string) error {
 
 	return nil
 }
+
+func (p *OrderServiceImpl) FindOrdersByUserId(UserId string, page int, limit int) ([]*models.DBOrder, error) {
+	if page == 0 {
+		page = 1
+	}
+
+	if limit == 0 {
+		limit = 10
+	}
+
+	skip := (page - 1) * limit
+
+	opt := options.FindOptions{}
+	opt.SetLimit(int64(limit))
+	opt.SetSkip(int64(skip))
+	opt.SetSort(bson.M{"created_at": -1})
+
+	query := bson.M{"user_id": UserId} // Filter by UserId
+
+	cursor, err := p.orderCollection.Find(p.ctx, query, &opt)
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(p.ctx)
+
+	var orders []*models.DBOrder
+
+	for cursor.Next(p.ctx) {
+		order := &models.DBOrder{}
+		err := cursor.Decode(order)
+
+		if err != nil {
+			return nil, err
+		}
+
+		orders = append(orders, order)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	if len(orders) == 0 {
+		return []*models.DBOrder{}, nil
+	}
+
+	return orders, nil
+}

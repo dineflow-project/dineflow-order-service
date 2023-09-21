@@ -1,5 +1,6 @@
 # dineflow-order-services
 
+Add app.env
 How to run:
 air
 

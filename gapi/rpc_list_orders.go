@@ -33,3 +33,30 @@ func (orderServer *OrderServer) GetOrders(req *pb.GetOrdersRequest, stream pb.Or
 
 	return nil
 }
+
+func (orderServer *OrderServer) GetOrdersByUserId(req *pb.GetOrdersByUserIdRequest, stream pb.OrderService_GetOrdersByUserIdServer) error {
+	userId := req.GetUserId()
+	page := req.GetPage()
+	limit := req.GetLimit()
+
+	orders, err := orderServer.orderService.FindOrdersByUserId(userId, int(page), int(limit))
+	if err != nil {
+		return status.Errorf(codes.Internal, err.Error())
+	}
+
+	for _, order := range orders {
+		stream.Send(&pb.Order{
+			Id:        order.Id.Hex(),
+			Status:    order.Status,
+			MenuId:    order.MenuId,
+			VenderId:  order.VenderId,
+			Price:     order.Price,
+			Request:   order.Request,
+			UserId:    order.UserId,
+			CreatedAt: timestamppb.New(order.CreateAt),
+			UpdatedAt: timestamppb.New(order.UpdatedAt),
+		})
+	}
+
+	return nil
+}

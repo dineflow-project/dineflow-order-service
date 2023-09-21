@@ -11,6 +11,7 @@ service OrderService {
   rpc CreateOrder(CreateOrderRequest) returns (OrderResponse) {}
   rpc GetOrder(OrderRequest) returns (OrderResponse) {}
   rpc GetOrders(GetOrdersRequest) returns (stream Order) {}
+  rpc GetOrdersByUserId(GetOrdersByUserIdRequest) returns (stream Order) {}
   rpc UpdateOrder(UpdateOrderRequest) returns (OrderResponse) {}
   rpc DeleteOrder(OrderRequest) returns (DeleteOrderResponse) {}
 }
@@ -23,3 +24,9 @@ message GetOrdersRequest {
 message OrderRequest { string Id = 1; }
 
 message DeleteOrderResponse { bool success = 1; }
+
+message GetOrdersByUserIdRequest {
+  string UserId = 1;
+  optional int64 page = 2;
+  optional int64 limit = 3;
+}

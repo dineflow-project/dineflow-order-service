@@ -5,16 +5,12 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"net/http"
 
 	"dineflow-order-service/config"
-	"dineflow-order-service/controllers"
 	"dineflow-order-service/gapi"
 	"dineflow-order-service/pb"
-	"dineflow-order-service/routes"
 	"dineflow-order-service/services"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -31,10 +27,10 @@ var (
 	authCollection *mongo.Collection
 
 	// ? Create the Order Variables
-	orderService         services.OrderService
-	OrderController      controllers.OrderController
-	orderCollection      *mongo.Collection
-	OrderRouteController routes.OrderRouteController
+	orderService services.OrderService
+	// OrderController      controllers.OrderController
+	orderCollection *mongo.Collection
+	// OrderRouteController routes.OrderRouteController
 )
 
 func init() {
@@ -62,8 +58,8 @@ func init() {
 	// ? Instantiate the Constructors
 	orderCollection = mongoclient.Database("order_db").Collection("orders")
 	orderService = services.NewOrderService(orderCollection, ctx)
-	OrderController = controllers.NewOrderController(orderService)
-	OrderRouteController = routes.NewOrderControllerRoute(OrderController)
+	// OrderController = controllers.NewOrderController(orderService)
+	// OrderRouteController = routes.NewOrderControllerRoute(OrderController)
 
 	server = gin.Default()
 }
@@ -106,20 +102,20 @@ func startGrpcServer(config config.Config) {
 	}
 }
 
-func startGinServer(config config.Config) {
+// func startGinServer(config config.Config) {
 
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{config.Origin}
-	corsConfig.AllowCredentials = true
+// 	corsConfig := cors.DefaultConfig()
+// 	corsConfig.AllowOrigins = []string{config.Origin}
+// 	corsConfig.AllowCredentials = true
 
-	server.Use(cors.New(corsConfig))
+// 	server.Use(cors.New(corsConfig))
 
-	router := server.Group("/api")
-	router.GET("/healthchecker", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "ok"})
-	})
+// 	router := server.Group("/api")
+// 	router.GET("/healthchecker", func(ctx *gin.Context) {
+// 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "ok"})
+// 	})
 
-	// ? Order Route
-	OrderRouteController.OrderRoute(router)
-	log.Fatal(server.Run(":" + config.Port))
-}
+// 	// ? Order Route
+// 	OrderRouteController.OrderRoute(router)
+// 	log.Fatal(server.Run(":" + config.Port))
+// }

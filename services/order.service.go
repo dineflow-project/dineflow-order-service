@@ -7,5 +7,6 @@ type OrderService interface {
 	UpdateOrder(string, *models.UpdateOrder) (*models.DBOrder, error)
 	FindOrderById(string) (*models.DBOrder, error)
 	FindOrders(page int, limit int) ([]*models.DBOrder, error)
+	FindOrdersByUserId(UserId string, page int, limit int) ([]*models.DBOrder, error)
 	DeleteOrder(string) error
 }
