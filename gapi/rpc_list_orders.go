@@ -101,6 +101,7 @@ func ModelToProtoOrderMenus(modelOrderMenus []*models.OrderMenu) []*pb.Order_Ord
 	for _, modelMenu := range modelOrderMenus {
 		protoMenu := &pb.Order_OrderMenu{
 			MenuId:  modelMenu.MenuId,
+			Price:   modelMenu.Price,
 			Request: modelMenu.Request,
 		}
 		protoOrderMenus = append(protoOrderMenus, protoMenu)

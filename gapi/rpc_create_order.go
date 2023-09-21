@@ -18,7 +18,7 @@ func (orderServer *OrderServer) CreateOrder(ctx context.Context, req *pb.CreateO
 		Status:     req.GetStatus(),
 		VendorId:   req.GetVendorId(),
 		UserId:     req.GetUserId(),
-		OrderMenus: ProtoToModelOrderMenu(req.GetOrderMenus()), // Convert order menus
+		OrderMenus: ProtoToModelCreateOrderMenu(req.GetOrderMenus()), // Convert order menus
 	}
 
 	// Calculate the total price by summing the prices of OrderMenu items
@@ -32,28 +32,30 @@ func (orderServer *OrderServer) CreateOrder(ctx context.Context, req *pb.CreateO
 	}
 
 	// Convert the created order to protobuf response
+	orderMenus := ModelToProtoOrderMenus(order.OrderMenus)
 	res := &pb.OrderResponse{
 		Order: &pb.Order{
-			Id:        newOrder.Id.Hex(),
-			Status:    newOrder.Status,
-			VendorId:  newOrder.VendorId,
-			Price:     newOrder.Price, // Use the calculated total price
-			UserId:    newOrder.UserId,
-			CreatedAt: timestamppb.New(newOrder.CreateAt),
-			UpdatedAt: timestamppb.New(newOrder.UpdatedAt),
+			Id:         newOrder.Id.Hex(),
+			Status:     newOrder.Status,
+			VendorId:   newOrder.VendorId,
+			OrderMenus: orderMenus,
+			Price:      newOrder.Price, // Use the calculated total price
+			UserId:     newOrder.UserId,
+			CreatedAt:  timestamppb.New(newOrder.CreateAt),
+			UpdatedAt:  timestamppb.New(newOrder.UpdatedAt),
 		},
 	}
 	return res, nil
 }
 
-func ProtoToModelOrderMenu(protoOrderMenu []*pb.CreateOrderRequest_OrderMenu) []*models.OrderMenu {
+func ProtoToModelCreateOrderMenu(protoOrderMenu []*pb.CreateOrderRequest_OrderMenu) []*models.OrderMenu {
 	var modelOrderMenus []*models.OrderMenu
 
 	for _, protoMenu := range protoOrderMenu {
 		modelMenu := &models.OrderMenu{
 			MenuId:  protoMenu.MenuId,
+			Price:   protoMenu.Price,
 			Request: protoMenu.Request,
-			Price:   protoMenu.Price, // Set the Price field from the protobuf message
 		}
 		modelOrderMenus = append(modelOrderMenus, modelMenu)
 	}

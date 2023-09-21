@@ -16,15 +16,17 @@ import (
 func (orderServer *OrderServer) UpdateOrder(ctx context.Context, req *pb.UpdateOrderRequest) (*pb.OrderResponse, error) {
 	orderId := req.GetId()
 
+	// Convert the protobuf request to your model
 	order := &models.UpdateOrder{
-		MenuId:    req.GetMenuId(),
-		Status:    req.GetStatus(),
-		VendorId:  req.GetVendorId(),
-		Price:     req.GetPrice(),
-		Request:   req.GetRequest(),
-		UserId:    req.GetUserId(),
-		UpdatedAt: time.Now(),
+		Status:     req.GetStatus(),
+		VendorId:   req.GetVendorId(),
+		UserId:     req.GetUserId(),
+		OrderMenus: ProtoToModelUpdateOrderMenu(req.GetOrderMenus()), // Convert order menus
+		UpdatedAt:  time.Now(),
 	}
+
+	// Calculate the total price by summing the prices of OrderMenu items
+	order.Price = CalculateTotalPrice(order.OrderMenus)
 
 	updatedOrder, err := orderServer.orderService.UpdateOrder(orderId, order)
 
@@ -35,18 +37,34 @@ func (orderServer *OrderServer) UpdateOrder(ctx context.Context, req *pb.UpdateO
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	// Convert the updated order to protobuf response
+	orderMenus := ModelToProtoOrderMenus(order.OrderMenus)
 	res := &pb.OrderResponse{
 		Order: &pb.Order{
-			Id:        updatedOrder.Id.Hex(),
-			Status:    order.Status,
-			MenuId:    order.MenuId,
-			VendorId:  order.VendorId,
-			Price:     order.Price,
-			Request:   order.Request,
-			UserId:    order.UserId,
-			CreatedAt: timestamppb.New(updatedOrder.CreateAt),
-			UpdatedAt: timestamppb.New(updatedOrder.UpdatedAt),
+			Id:         updatedOrder.Id.Hex(),
+			Status:     updatedOrder.Status,
+			VendorId:   updatedOrder.VendorId,
+			OrderMenus: orderMenus,
+			Price:      updatedOrder.Price, // Use the calculated total price
+			UserId:     updatedOrder.UserId,
+			CreatedAt:  timestamppb.New(updatedOrder.CreateAt),
+			UpdatedAt:  timestamppb.New(updatedOrder.UpdatedAt),
 		},
 	}
 	return res, nil
+}
+
+func ProtoToModelUpdateOrderMenu(protoOrderMenu []*pb.UpdateOrderRequest_OrderMenu) []*models.OrderMenu {
+	var modelOrderMenus []*models.OrderMenu
+
+	for _, protoMenu := range protoOrderMenu {
+		modelMenu := &models.OrderMenu{
+			MenuId:  protoMenu.MenuId,
+			Price:   protoMenu.Price,
+			Request: protoMenu.Request,
+		}
+		modelOrderMenus = append(modelOrderMenus, modelMenu)
+	}
+
+	return modelOrderMenus
 }

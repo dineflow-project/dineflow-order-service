@@ -23,17 +23,18 @@ func (orderServer *OrderServer) GetOrder(ctx context.Context, req *pb.OrderReque
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
+	orderMenus := ModelToProtoOrderMenus(order.OrderMenus)
+
 	res := &pb.OrderResponse{
 		Order: &pb.Order{
-			Id:        order.Id.Hex(),
-			Status:    order.Status,
-			MenuId:    order.MenuId,
-			VendorId:  order.VendorId,
-			Price:     order.Price,
-			Request:   order.Request,
-			UserId:    order.UserId,
-			CreatedAt: timestamppb.New(order.CreateAt),
-			UpdatedAt: timestamppb.New(order.UpdatedAt),
+			Id:         order.Id.Hex(),
+			Status:     order.Status,
+			OrderMenus: orderMenus,
+			VendorId:   order.VendorId,
+			Price:      order.Price,
+			UserId:     order.UserId,
+			CreatedAt:  timestamppb.New(order.CreateAt),
+			UpdatedAt:  timestamppb.New(order.UpdatedAt),
 		},
 	}
 	return res, nil
