@@ -26,6 +26,7 @@ database.yaml
 redis.yaml
 .env
 .env.prod
+app.env
 
 # idea
 .idea
