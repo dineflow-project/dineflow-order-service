@@ -1,6 +1,7 @@
 package gapi
 
 import (
+	"dineflow-order-service/models"
 	"dineflow-order-service/pb"
 
 	"google.golang.org/grpc/codes"
@@ -18,16 +19,18 @@ func (orderServer *OrderServer) GetOrders(req *pb.GetOrdersRequest, stream pb.Or
 	}
 
 	for _, order := range orders {
+		// Convert OrderMenus to protobuf format
+		orderMenus := ModelToProtoOrderMenus(order.OrderMenus)
+
 		stream.Send(&pb.Order{
-			Id:        order.Id.Hex(),
-			Status:    order.Status,
-			MenuId:    order.MenuId,
-			VendorId:  order.VendorId,
-			Price:     order.Price,
-			Request:   order.Request,
-			UserId:    order.UserId,
-			CreatedAt: timestamppb.New(order.CreateAt),
-			UpdatedAt: timestamppb.New(order.UpdatedAt),
+			Id:         order.Id.Hex(),
+			Status:     order.Status,
+			OrderMenus: orderMenus,
+			VendorId:   order.VendorId,
+			Price:      order.Price,
+			UserId:     order.UserId,
+			CreatedAt:  timestamppb.New(order.CreateAt),
+			UpdatedAt:  timestamppb.New(order.UpdatedAt),
 		})
 	}
 
@@ -45,16 +48,18 @@ func (orderServer *OrderServer) GetOrdersByUserId(req *pb.GetOrdersByUserIdReque
 	}
 
 	for _, order := range orders {
+		// Convert OrderMenus to protobuf format
+		orderMenus := ModelToProtoOrderMenus(order.OrderMenus)
+
 		stream.Send(&pb.Order{
-			Id:        order.Id.Hex(),
-			Status:    order.Status,
-			MenuId:    order.MenuId,
-			VendorId:  order.VendorId,
-			Price:     order.Price,
-			Request:   order.Request,
-			UserId:    order.UserId,
-			CreatedAt: timestamppb.New(order.CreateAt),
-			UpdatedAt: timestamppb.New(order.UpdatedAt),
+			Id:         order.Id.Hex(),
+			Status:     order.Status,
+			OrderMenus: orderMenus,
+			VendorId:   order.VendorId,
+			Price:      order.Price,
+			UserId:     order.UserId,
+			CreatedAt:  timestamppb.New(order.CreateAt),
+			UpdatedAt:  timestamppb.New(order.UpdatedAt),
 		})
 	}
 
@@ -72,18 +77,34 @@ func (orderServer *OrderServer) GetOrdersByVendorId(req *pb.GetOrdersByVendorIdR
 	}
 
 	for _, order := range orders {
+		// Convert OrderMenus to protobuf format
+		orderMenus := ModelToProtoOrderMenus(order.OrderMenus)
+
 		stream.Send(&pb.Order{
-			Id:        order.Id.Hex(),
-			Status:    order.Status,
-			MenuId:    order.MenuId,
-			VendorId:  order.VendorId,
-			Price:     order.Price,
-			Request:   order.Request,
-			UserId:    order.UserId,
-			CreatedAt: timestamppb.New(order.CreateAt),
-			UpdatedAt: timestamppb.New(order.UpdatedAt),
+			Id:         order.Id.Hex(),
+			Status:     order.Status,
+			OrderMenus: orderMenus,
+			VendorId:   order.VendorId,
+			Price:      order.Price,
+			UserId:     order.UserId,
+			CreatedAt:  timestamppb.New(order.CreateAt),
+			UpdatedAt:  timestamppb.New(order.UpdatedAt),
 		})
 	}
 
 	return nil
+}
+
+func ModelToProtoOrderMenus(modelOrderMenus []*models.OrderMenu) []*pb.Order_OrderMenu {
+	var protoOrderMenus []*pb.Order_OrderMenu
+
+	for _, modelMenu := range modelOrderMenus {
+		protoMenu := &pb.Order_OrderMenu{
+			MenuId:  modelMenu.MenuId,
+			Request: modelMenu.Request,
+		}
+		protoOrderMenus = append(protoOrderMenus, protoMenu)
+	}
+
+	return protoOrderMenus
 }

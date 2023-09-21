@@ -5,11 +5,13 @@ package pb;
 option go_package = "dineflow-order-service/pb";
 
 message CreateOrderRequest {
+  message OrderMenu {
+    string MenuId = 1;
+    float Price = 2;
+    string Request = 3;
+  }
   string Status = 1;
-  string MenuId = 2;
-  string VendorId = 3;
-  float Price = 4;
-  string Request = 5;
-  string UserId = 6;
+  string VendorId = 2;
+  repeated OrderMenu OrderMenus = 3; 
+  string UserId = 4;
 }
-

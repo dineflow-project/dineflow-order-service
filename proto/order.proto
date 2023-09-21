@@ -6,15 +6,19 @@ option go_package = "dineflow-order-service/pb";
 import "google/protobuf/timestamp.proto";
 
 message Order {
+  message OrderMenu {
+    string MenuId = 1;
+    float Price = 2;
+    string Request = 3;
+  }
   string Id = 1;
   string Status = 2;
-  string MenuId = 3;
-  string VendorId = 4;
+  string VendorId = 3;
+  repeated OrderMenu OrderMenus = 4; 
   float Price = 5;
-  string Request = 6;
-  string UserId = 7;
-  google.protobuf.Timestamp created_at = 8;
-  google.protobuf.Timestamp updated_at = 9;
+  string UserId = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
 }
 
 message OrderResponse { Order order = 1; }
