@@ -9,7 +9,7 @@ message Order {
   string Id = 1;
   string Status = 2;
   string MenuId = 3;
-  string VenderId = 4;
+  string VendorId = 4;
   float Price = 5;
   string Request = 6;
   string UserId = 7;

@@ -28,7 +28,7 @@ func (orderServer *OrderServer) GetOrder(ctx context.Context, req *pb.OrderReque
 			Id:        order.Id.Hex(),
 			Status:    order.Status,
 			MenuId:    order.MenuId,
-			VenderId:  order.VenderId,
+			VendorId:  order.VendorId,
 			Price:     order.Price,
 			Request:   order.Request,
 			UserId:    order.UserId,

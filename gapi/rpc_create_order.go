@@ -16,7 +16,7 @@ func (orderServer *OrderServer) CreateOrder(ctx context.Context, req *pb.CreateO
 	order := &models.CreateOrderRequest{
 		MenuId:   req.GetMenuId(),
 		Status:   req.GetStatus(),
-		VenderId: req.GetVenderId(),
+		VendorId: req.GetVendorId(),
 		Price:    req.GetPrice(),
 		Request:  req.GetRequest(),
 		UserId:   req.GetUserId(),
@@ -37,7 +37,7 @@ func (orderServer *OrderServer) CreateOrder(ctx context.Context, req *pb.CreateO
 			Id:        newOrder.Id.Hex(),
 			Status:    order.Status,
 			MenuId:    order.MenuId,
-			VenderId:  order.VenderId,
+			VendorId:  order.VendorId,
 			Price:     order.Price,
 			Request:   order.Request,
 			UserId:    order.UserId,

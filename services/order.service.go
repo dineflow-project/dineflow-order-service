@@ -8,5 +8,6 @@ type OrderService interface {
 	FindOrderById(string) (*models.DBOrder, error)
 	FindOrders(page int, limit int) ([]*models.DBOrder, error)
 	FindOrdersByUserId(UserId string, page int, limit int) ([]*models.DBOrder, error)
+	FindOrdersByVendorId(VendorId string, page int, limit int) ([]*models.DBOrder, error)
 	DeleteOrder(string) error
 }
