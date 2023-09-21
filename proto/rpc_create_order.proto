@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "dineflow-order-service/pb";
+
+message CreateOrderRequest {
+  string Status = 1;
+  string MenuId = 2;
+  string VenderId = 3;
+  float Price = 4;
+  string Request = 5;
+  string UserId = 6;
+}
+

@@ -11,47 +11,47 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type PostController struct {
-	postService services.PostService
+type OrderController struct {
+	orderService services.OrderService
 }
 
-func NewPostController(postService services.PostService) PostController {
-	return PostController{postService}
+func NewOrderController(orderService services.OrderService) OrderController {
+	return OrderController{orderService}
 }
 
-func (pc *PostController) CreatePost(ctx *gin.Context) {
-	var post *models.CreatePostRequest
+func (pc *OrderController) CreateOrder(ctx *gin.Context) {
+	var order *models.CreateOrderRequest
 
-	if err := ctx.ShouldBindJSON(&post); err != nil {
+	if err := ctx.ShouldBindJSON(&order); err != nil {
 		ctx.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	newPost, err := pc.postService.CreatePost(post)
+	newOrder, err := pc.orderService.CreateOrder(order)
 
 	if err != nil {
-		if strings.Contains(err.Error(), "title already exists") {
-			ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": err.Error()})
-			return
-		}
+		// if strings.Contains(err.Error(), "title already exists") {
+		// 	ctx.JSON(http.StatusConflict, gin.H{"status": "fail", "message": err.Error()})
+		// 	return
+		// }
 
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": newPost})
+	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": newOrder})
 }
 
-func (pc *PostController) UpdatePost(ctx *gin.Context) {
-	postId := ctx.Param("postId")
+func (pc *OrderController) UpdateOrder(ctx *gin.Context) {
+	orderId := ctx.Param("orderId")
 
-	var post *models.UpdatePost
-	if err := ctx.ShouldBindJSON(&post); err != nil {
+	var order *models.UpdateOrder
+	if err := ctx.ShouldBindJSON(&order); err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	updatedPost, err := pc.postService.UpdatePost(postId, post)
+	updatedOrder, err := pc.orderService.UpdateOrder(orderId, order)
 	if err != nil {
 		if strings.Contains(err.Error(), "Id exists") {
 			ctx.JSON(http.StatusNotFound, gin.H{"status": "fail", "message": err.Error()})
@@ -61,23 +61,23 @@ func (pc *PostController) UpdatePost(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": updatedPost})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": updatedOrder})
 }
 
-func (pc *PostController) FindPostById(ctx *gin.Context) {
-	postId := ctx.Param("postId")
+func (pc *OrderController) FindOrderById(ctx *gin.Context) {
+	orderId := ctx.Param("orderId")
 
-	post, err := pc.postService.FindPostById(postId)
+	order, err := pc.orderService.FindOrderById(orderId)
 
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": post})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": order})
 }
 
-func (pc *PostController) FindPosts(ctx *gin.Context) {
+func (pc *OrderController) FindOrders(ctx *gin.Context) {
 	var page = ctx.DefaultQuery("page", "1")
 	var limit = ctx.DefaultQuery("limit", "10")
 
@@ -93,19 +93,19 @@ func (pc *PostController) FindPosts(ctx *gin.Context) {
 		return
 	}
 
-	posts, err := pc.postService.FindPosts(intPage, intLimit)
+	orders, err := pc.orderService.FindOrders(intPage, intLimit)
 	if err != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(posts), "data": posts})
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "results": len(orders), "data": orders})
 }
 
-func (pc *PostController) DeletePost(ctx *gin.Context) {
-	postId := ctx.Param("postId")
+func (pc *OrderController) DeleteOrder(ctx *gin.Context) {
+	orderId := ctx.Param("orderId")
 
-	err := pc.postService.DeletePost(postId)
+	err := pc.orderService.DeleteOrder(orderId)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "Id exists") {

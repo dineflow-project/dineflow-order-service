@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "dineflow-order-service/pb";
+import "google/protobuf/timestamp.proto";
+
+message Order {
+  string Id = 1;
+  string Status = 2;
+  string MenuId = 3;
+  string VenderId = 4;
+  float Price = 5;
+  string Request = 6;
+  string UserId = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message OrderResponse { Order order = 1; }

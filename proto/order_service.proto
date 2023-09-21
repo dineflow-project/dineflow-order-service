@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package pb;
+
+option go_package = "dineflow-order-service/pb";
+import "order.proto";
+import "rpc_create_order.proto";
+import "rpc_update_order.proto";
+
+service OrderService {
+  rpc CreateOrder(CreateOrderRequest) returns (OrderResponse) {}
+  rpc GetOrder(OrderRequest) returns (OrderResponse) {}
+  rpc GetOrders(GetOrdersRequest) returns (stream Order) {}
+  rpc UpdateOrder(UpdateOrderRequest) returns (OrderResponse) {}
+  rpc DeleteOrder(OrderRequest) returns (DeleteOrderResponse) {}
+}
+
+message GetOrdersRequest {
+  optional int64 page = 1;
+  optional int64 limit = 2;
+}
+
+message OrderRequest { string Id = 1; }
+
+message DeleteOrderResponse { bool success = 1; }

@@ -30,11 +30,11 @@ var (
 
 	authCollection *mongo.Collection
 
-	// ? Create the Post Variables
-	postService         services.PostService
-	PostController      controllers.PostController
-	postCollection      *mongo.Collection
-	PostRouteController routes.PostRouteController
+	// ? Create the Order Variables
+	orderService         services.OrderService
+	OrderController      controllers.OrderController
+	orderCollection      *mongo.Collection
+	OrderRouteController routes.OrderRouteController
 )
 
 func init() {
@@ -60,10 +60,10 @@ func init() {
 	fmt.Println("MongoDB successfully connected...")
 
 	// ? Instantiate the Constructors
-	postCollection = mongoclient.Database("golang_mongodb").Collection("posts")
-	postService = services.NewPostService(postCollection, ctx)
-	PostController = controllers.NewPostController(postService)
-	PostRouteController = routes.NewPostControllerRoute(PostController)
+	orderCollection = mongoclient.Database("order_db").Collection("orders")
+	orderService = services.NewOrderService(orderCollection, ctx)
+	OrderController = controllers.NewOrderController(orderService)
+	OrderRouteController = routes.NewOrderControllerRoute(OrderController)
 
 	server = gin.Default()
 }
@@ -83,15 +83,15 @@ func main() {
 
 func startGrpcServer(config config.Config) {
 
-	postServer, err := gapi.NewGrpcPostServer(postCollection, postService)
+	orderServer, err := gapi.NewGrpcOrderServer(orderCollection, orderService)
 	if err != nil {
-		log.Fatal("cannot create grpc postServer: ", err)
+		log.Fatal("cannot create grpc orderServer: ", err)
 	}
 
 	grpcServer := grpc.NewServer()
 
-	// ? Register the Post gRPC service
-	pb.RegisterPostServiceServer(grpcServer, postServer)
+	// ? Register the Order gRPC service
+	pb.RegisterOrderServiceServer(grpcServer, orderServer)
 	reflection.Register(grpcServer)
 
 	listener, err := net.Listen("tcp", config.GrpcServerAddress)
@@ -119,7 +119,7 @@ func startGinServer(config config.Config) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": "ok"})
 	})
 
-	// ? Post Route
-	PostRouteController.PostRoute(router)
+	// ? Order Route
+	OrderRouteController.OrderRoute(router)
 	log.Fatal(server.Run(":" + config.Port))
 }

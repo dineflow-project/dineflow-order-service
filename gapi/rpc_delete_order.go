@@ -10,17 +10,17 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func (postServer *PostServer) DeletePost(ctx context.Context, req *pb.PostRequest) (*pb.DeletePostResponse, error) {
-	postId := req.GetId()
+func (orderServer *OrderServer) DeleteOrder(ctx context.Context, req *pb.OrderRequest) (*pb.DeleteOrderResponse, error) {
+	orderId := req.GetId()
 
-	if err := postServer.postService.DeletePost(postId); err != nil {
+	if err := orderServer.orderService.DeleteOrder(orderId); err != nil {
 		if strings.Contains(err.Error(), "Id exists") {
 			return nil, status.Errorf(codes.NotFound, err.Error())
 		}
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
 
-	res := &pb.DeletePostResponse{
+	res := &pb.DeleteOrderResponse{
 		Success: true,
 	}
 
