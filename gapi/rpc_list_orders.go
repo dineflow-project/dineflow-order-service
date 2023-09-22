@@ -102,6 +102,7 @@ func ModelToProtoOrderMenus(modelOrderMenus []*models.OrderMenu) []*pb.Order_Ord
 		protoMenu := &pb.Order_OrderMenu{
 			MenuId:  modelMenu.MenuId,
 			Price:   modelMenu.Price,
+			Amount:  int32(modelMenu.Amount),
 			Request: modelMenu.Request,
 		}
 		protoOrderMenus = append(protoOrderMenus, protoMenu)

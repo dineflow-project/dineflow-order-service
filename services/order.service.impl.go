@@ -29,9 +29,9 @@ func (p *OrderServiceImpl) CreateOrder(order *models.CreateOrderRequest) (*model
 	res, err := p.orderCollection.InsertOne(p.ctx, order)
 
 	if err != nil {
-		if er, ok := err.(mongo.WriteException); ok && er.WriteErrors[0].Code == 11000 {
-			return nil, errors.New("order with that title already exists")
-		}
+		// if er, ok := err.(mongo.WriteException); ok && er.WriteErrors[0].Code == 11000 {
+		// 	return nil, errors.New("order with that title already exists")
+		// }
 		return nil, err
 	}
 

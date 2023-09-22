@@ -8,7 +8,8 @@ message CreateOrderRequest {
   message OrderMenu {
     string MenuId = 1;
     float Price = 2;
-    string Request = 3;
+    int32 Amount = 3;
+    string Request = 4;
   }
   string Status = 1;
   string VendorId = 2;

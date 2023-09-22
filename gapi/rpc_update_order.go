@@ -60,6 +60,7 @@ func ProtoToModelUpdateOrderMenu(protoOrderMenu []*pb.UpdateOrderRequest_OrderMe
 	for _, protoMenu := range protoOrderMenu {
 		modelMenu := &models.OrderMenu{
 			MenuId:  protoMenu.MenuId,
+			Amount:  int(protoMenu.Amount),
 			Price:   protoMenu.Price,
 			Request: protoMenu.Request,
 		}

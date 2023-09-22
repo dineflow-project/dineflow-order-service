@@ -8,6 +8,7 @@ import (
 
 type OrderMenu struct {
 	MenuId  string  `json:"menu_id" bson:"menu_id" binding:"required"`
+	Amount  int     `json:"amount" bson:"amount" binding:"required"`
 	Price   float32 `json:"price" bson:"price" binding:"required"`
 	Request string  `json:"request,omitempty" bson:"request,omitempty"`
 }

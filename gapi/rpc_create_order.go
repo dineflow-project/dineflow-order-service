@@ -55,6 +55,7 @@ func ProtoToModelCreateOrderMenu(protoOrderMenu []*pb.CreateOrderRequest_OrderMe
 		modelMenu := &models.OrderMenu{
 			MenuId:  protoMenu.MenuId,
 			Price:   protoMenu.Price,
+			Amount:  int(protoMenu.Amount),
 			Request: protoMenu.Request,
 		}
 		modelOrderMenus = append(modelOrderMenus, modelMenu)
@@ -67,7 +68,7 @@ func CalculateTotalPrice(orderMenus []*models.OrderMenu) float32 {
 	totalPrice := float32(0)
 
 	for _, menu := range orderMenus {
-		totalPrice += menu.Price
+		totalPrice += menu.Price * float32(menu.Amount)
 	}
 
 	return totalPrice
