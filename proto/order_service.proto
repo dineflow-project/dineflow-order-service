@@ -22,18 +22,18 @@ message GetOrdersRequest {
   optional int64 limit = 2;
 }
 
-message OrderRequest { string Id = 1; }
+message OrderRequest { string id = 1; } // Updated field name to snake_case
 
 message DeleteOrderResponse { bool success = 1; }
 
 message GetOrdersByUserIdRequest {
-  string UserId = 1;
+  string user_id = 1; // Updated field name to snake_case
   optional int64 page = 2;
   optional int64 limit = 3;
 }
 
 message GetOrdersByVendorIdRequest {
-  string VendorId = 1;
+  string vendor_id = 1; // Updated field name to snake_case
   optional int64 page = 2;
   optional int64 limit = 3;
 }

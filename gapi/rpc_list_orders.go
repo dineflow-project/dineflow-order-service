@@ -67,11 +67,11 @@ func (orderServer *OrderServer) GetOrdersByUserId(req *pb.GetOrdersByUserIdReque
 }
 
 func (orderServer *OrderServer) GetOrdersByVendorId(req *pb.GetOrdersByVendorIdRequest, stream pb.OrderService_GetOrdersByVendorIdServer) error {
-	vendorId := req.GetVendorId()
+	vendor_id := req.GetVendorId()
 	page := req.GetPage()
 	limit := req.GetLimit()
 
-	orders, err := orderServer.orderService.FindOrdersByVendorId(vendorId, int(page), int(limit))
+	orders, err := orderServer.orderService.FindOrdersByVendorId(vendor_id, int(page), int(limit))
 	if err != nil {
 		return status.Errorf(codes.Internal, err.Error())
 	}
