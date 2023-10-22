@@ -60,7 +60,7 @@ func (orderServer *OrderServer) UpdateOrder(ctx context.Context, req *pb.UpdateO
 	} else if updatedOrder.Status == "finish" {
 		notiType = "finish order"
 	}
-	err = rabbitmq.PushNotification(updatedOrder.VendorId, updatedOrder.Id.Hex(), notiType)
+	err = rabbitmq.PushNotification(updatedOrder.UserId, updatedOrder.Id.Hex(), notiType)
 	if err != nil {
 		fmt.Println("Error RabbitMQ: ", err)
 	}
