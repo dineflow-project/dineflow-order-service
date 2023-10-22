@@ -2,9 +2,11 @@ package gapi
 
 import (
 	"context"
+	"fmt"
 
 	"dineflow-order-service/models"
 	"dineflow-order-service/pb"
+	"dineflow-order-service/rabbitmq"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -15,7 +17,7 @@ func (orderServer *OrderServer) CreateOrder(ctx context.Context, req *pb.CreateO
 
 	// Convert the protobuf request to your model
 	order := &models.CreateOrderRequest{
-		Status:     req.GetStatus(),
+		Status:     "waiting",
 		VendorId:   req.GetVendorId(),
 		UserId:     req.GetUserId(),
 		OrderMenus: ProtoToModelCreateOrderMenu(req.GetOrderMenus()), // Convert order menus
@@ -45,7 +47,13 @@ func (orderServer *OrderServer) CreateOrder(ctx context.Context, req *pb.CreateO
 			UpdatedAt:  timestamppb.New(newOrder.UpdatedAt),
 		},
 	}
-	return res, nil
+
+	err = rabbitmq.PushNotification(newOrder.VendorId, newOrder.Id.Hex(), "new order")
+	if err != nil {
+		fmt.Println("Error RabbitMQ: ", err)
+	}
+
+	return res, err
 }
 
 func ProtoToModelCreateOrderMenu(protoOrderMenu []*pb.CreateOrderRequest_OrderMenu) []*models.OrderMenu {

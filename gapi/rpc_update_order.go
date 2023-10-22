@@ -2,11 +2,13 @@ package gapi
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
 	"dineflow-order-service/models"
 	"dineflow-order-service/pb"
+	"dineflow-order-service/rabbitmq"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -51,7 +53,19 @@ func (orderServer *OrderServer) UpdateOrder(ctx context.Context, req *pb.UpdateO
 			UpdatedAt:  timestamppb.New(updatedOrder.UpdatedAt),
 		},
 	}
-	return res, nil
+
+	notiType := ""
+	if updatedOrder.Status == "cooking" {
+		notiType = "cooking order"
+	} else if updatedOrder.Status == "finish" {
+		notiType = "finish order"
+	}
+	err = rabbitmq.PushNotification(updatedOrder.VendorId, updatedOrder.Id.Hex(), notiType)
+	if err != nil {
+		fmt.Println("Error RabbitMQ: ", err)
+	}
+
+	return res, err
 }
 
 func ProtoToModelUpdateOrderMenu(protoOrderMenu []*pb.UpdateOrderRequest_OrderMenu) []*models.OrderMenu {
