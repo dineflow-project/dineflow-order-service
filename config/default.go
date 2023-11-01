@@ -1,28 +1,47 @@
 package config
 
 import (
-	"github.com/spf13/viper"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
-type Config struct {
-	DBUri             string `mapstructure:"MONGODB_LOCAL_URI"`
-	Port              string `mapstructure:"PORT"`
-	GrpcServerAddress string `mapstructure:"GRPC_SERVER_ADDRESS"`
-	Origin            string `mapstructure:"CLIENT_ORIGIN"`
+func loadDotEnv() {
+	env := os.Getenv("USE_DOT_ENV")
+	if env == "" {
+		if err := godotenv.Load(); err != nil {
+			log.Fatal("Error loading .env file")
+		}
+	}
 }
 
-func LoadConfig(path string) (config Config, err error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigType("env")
-	viper.SetConfigName("app")
+func EnvAMQPURL() string {
+	loadDotEnv()
+	return os.Getenv("AMQP_URL")
+}
 
-	viper.AutomaticEnv()
+func EnvNotiQueueName() string {
+	loadDotEnv()
+	return os.Getenv("NOTI_QUEUE_NAME")
+}
 
-	err = viper.ReadInConfig()
-	if err != nil {
-		return
-	}
+func EnvMongoInitDBRootUsername() string {
+	loadDotEnv()
+	return os.Getenv("MONGO_INITDB_ROOT_USERNAME")
+}
 
-	err = viper.Unmarshal(&config)
-	return
+func EnvMongoInitDBRootPassword() string {
+	loadDotEnv()
+	return os.Getenv("MONGO_INITDB_ROOT_PASSWORD")
+}
+
+func EnvMongoDBURI() string {
+	loadDotEnv()
+	return os.Getenv("MONGODB_LOCAL_URI")
+}
+
+func EnvGRPCServerAddress() string {
+	loadDotEnv()
+	return os.Getenv("GRPC_SERVER_ADDRESS")
 }

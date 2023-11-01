@@ -34,15 +34,11 @@ var (
 )
 
 func init() {
-	config, err := config.LoadConfig(".")
-	if err != nil {
-		log.Fatal("Could not load environment variables", err)
-	}
 
 	ctx = context.TODO()
 
 	// Connect to MongoDB
-	mongoconn := options.Client().ApplyURI(config.DBUri)
+	mongoconn := options.Client().ApplyURI(config.EnvMongoDBURI())
 	mongoclient, err := mongo.Connect(ctx, mongoconn)
 
 	if err != nil {
@@ -65,19 +61,13 @@ func init() {
 }
 
 func main() {
-	config, err := config.LoadConfig(".")
-
-	if err != nil {
-		log.Fatal("Could not load config", err)
-	}
-
 	defer mongoclient.Disconnect(ctx)
 
 	// startGinServer(config)
-	startGrpcServer(config)
+	startGrpcServer()
 }
 
-func startGrpcServer(config config.Config) {
+func startGrpcServer() {
 
 	orderServer, err := gapi.NewGrpcOrderServer(orderCollection, orderService)
 	if err != nil {
@@ -90,7 +80,7 @@ func startGrpcServer(config config.Config) {
 	pb.RegisterOrderServiceServer(grpcServer, orderServer)
 	reflection.Register(grpcServer)
 
-	listener, err := net.Listen("tcp", config.GrpcServerAddress)
+	listener, err := net.Listen("tcp", config.EnvGRPCServerAddress())
 	if err != nil {
 		log.Fatal("cannot create grpc server: ", err)
 	}

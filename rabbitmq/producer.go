@@ -3,10 +3,10 @@ package rabbitmq
 import (
 	"encoding/json"
 	"log"
-	"os"
 	"time"
 
-	"github.com/joho/godotenv"
+	"dineflow-order-service/config"
+
 	"github.com/streadway/amqp"
 )
 
@@ -20,13 +20,8 @@ type Notification struct {
 
 func PushNotification(recipientID string, orderID string, notiType string) error {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	// Connect to RabbitMQ server
-	conn, err := amqp.Dial(os.Getenv("AMQP_URL"))
+	conn, err := amqp.Dial(config.EnvAMQPURL())
 	if err != nil {
 		return err
 	}
@@ -41,12 +36,12 @@ func PushNotification(recipientID string, orderID string, notiType string) error
 
 	// Declare a queue
 	q, err := ch.QueueDeclare(
-		os.Getenv("NOTI_QUEUE_NAME"), // name
-		false,                        // durable
-		false,                        // delete when unused
-		false,                        // exclusive
-		false,                        // no-wait
-		nil,                          // arguments
+		config.EnvNotiQueueName(), // name
+		false,                     // durable
+		false,                     // delete when unused
+		false,                     // exclusive
+		false,                     // no-wait
+		nil,                       // arguments
 	)
 	if err != nil {
 		return err
