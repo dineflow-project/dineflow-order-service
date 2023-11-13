@@ -1,0 +1,37 @@
+version: "3.7"
+
+services:
+  order_api:
+    container_name: "order_services_api"
+    build:
+      context: .
+      dockerfile: ./api.Dockerfile 
+    ports:
+      - "8080:8080"
+    networks:
+      - order_network
+    env_file:
+      - ./.env
+
+  order_db:
+    container_name: "order_services_db"
+    image: mongo:4.4.6
+    networks:
+      - order_network
+    restart: always
+    ports:
+      - "27019:27017"
+    env_file:
+      - ./.env
+
+    volumes:
+      - order_database:/data/db 
+
+networks:
+  order_network:
+
+volumes:
+  order_database:
+
+
+
